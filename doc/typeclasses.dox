@@ -1,0 +1,403 @@
+/**
+
+@page pg_typeclasses Typeclasses
+@brief Explanation about typeclasses and how to define them
+
+_Typeclasses_ are constraints or concepts that represent the properties and
+behaviors of certain data types. Their definition is based in how certain
+operations apply for more than one data type and can relate to each other, hence
+said operations can be grouped under a specified criterion.
+
+In this library, the operations associated to a typeclass, represented as
+metafunctions, are known as _intrinsic metafunctions_.
+
+Some of the intrinsic operations (known in this library as _derived_) of
+certain typeclasses can be defined in terms of other ones, which are known as
+_basic_. The later ones are part of the _minimal complete definitions_ of the
+typeclasses.
+
+Also, some typeclasses can also extend or refine other typeclasses.
+
+@section sc_tcls_declaration Declaration
+
+The declaration of a new typeclass is done by overloading the `typeclass`
+struct with its respective, custom _typeclass tag_:
+
+```
+namespace my_namespace
+{
+
+// The tag of the custom typeclass
+struct Arithmetic;
+
+} // namespace my_namespace
+
+namespace erythronelumbo { namespace maihuenia
+{
+
+template <>
+struct typeclass<::my_namespace::Arithmetic>
+{
+  template <typename TypeTag1, typename TypeTag2 = TypeTag1>
+  struct define_for : false_
+  {
+    template <typename A, typename B>
+    struct plus_impl;
+
+    template <typename X>
+    struct negate_impl;
+  };
+};
+
+}} // namespace erythronelumbo::maihuenia
+```
+
+Notice how the `define_for` member struct inherites from `false_`. This is to
+indicate that no type implements this typeclass yet.
+
+This will also allow the definition of the intrinsic operations as _free_
+metafunctions:
+
+```
+namespace my_namespace
+{
+
+template <typename A, typename B>
+struct plus :
+  ::erythronelumbo::maihuenia::typeclass<
+    Arithmetic
+  >::template define_for<
+    ::erythronelumbo::maihuenia::tag_t<A>,
+    ::erythronelumbo::maihuenia::tag_t<B>
+  >::template plus_impl<A, B>
+{};
+
+template <typename X>
+struct negate :
+  ::erythronelumbo::maihuenia::typeclass<
+    Arithmetic
+  >::template define_for<
+    ::erythronelumbo::maihuenia::tag_t<X>
+  >::template negate_impl<X>
+{};
+
+} // namespace my_namespace
+```
+
+If we want `plus` to take more that two arguments, in a way it can act like
+doing `A + B + C + ...` (or `plus(A, B, C, ...)`), we can do the following:
+
+```
+namespace my_namespace
+{
+
+template <typename A, typename B, typename... Xs>
+struct plus :
+  plus<typename plus<A, B>::type, Xs...>
+{};
+
+} // namespace my_namespace
+```
+
+For operations like this, Maihuenia uses internally the `bin_op_many_c`
+metafunction, which is automatically generated when _building_ the library:
+
+```
+#include <erythronelumbo/maihuenia/bin_op_many.hpp>
+
+namespace my_namespace
+{
+
+template <typename A, typename B, typename... Xs>
+struct plus :
+  ::erythronelumbo::maihuenia::bin_op_many_c<plus, false, A, B, Xs...>
+{};
+
+} // namespace my_namespace
+```
+
+If some of the intrinsic operations of the typeclass are also able to be defined
+in terms on others, as mentioned before, declare them as members of the
+`derived_typeclass_ops` struct. They must define the behaviors of the intrinsic
+metafunctions.
+
+```
+namespace my_namespace
+{
+
+namespace detail
+{
+
+template <typename A, typename B>
+struct generic_times
+{
+  // This assumes that `adds_a_to_itself_b_times` is already implemented
+  using type = adds_a_to_itself_b_times<A, B>;
+};
+
+} // namespace detail
+
+} // namespace my_namespace
+
+
+namespace erythronelumbo { namespace maihuenia
+{
+
+template <>
+struct derived_typeclass_ops<::my_namespace::Arithmetic>
+{
+  // The number of template arguments MUST match the one from the
+  // "define_for" member of "typeclass".
+  template <typename TypeTag1, typename TypeTag2 = TypeTag1>
+  struct define_for : true_
+  {
+    template <typename A, typename B>
+    struct minus_impl :
+      ::my_namespace::add<A, typename ::my_namespace::negate<B>::type>
+    {};
+
+    template <typename A, typename B>
+    struct times_impl :
+      ::my_namespace::detail::generic_times<A, B>
+    {};
+  };
+};
+
+}} // namespace erythronelumbo::maihuenia
+```
+
+That `define_for` member struct inherits from `true_`, because of the reasons
+that will be explained later in here.
+
+Then, the _free_ metafunctions for the _derived_ operations should be defined as
+follows:
+
+```
+namespace my_namespace
+{
+
+template <typename A, typename B>
+struct minus :
+  ::erythronelumbo::maihuenia::typeclass<
+    Arithmetic
+  >::template define_for<
+    ::erythronelumbo::maihuenia::tag_t<A>,
+    ::erythronelumbo::maihuenia::tag_t<B>
+  >::template minus_impl<A, B>
+{};
+
+template <typename A, typename B>
+struct times :
+  ::erythronelumbo::maihuenia::typeclass<
+    Arithmetic
+  >::template define_for<
+    ::erythronelumbo::maihuenia::tag_t<A>,
+    ::erythronelumbo::maihuenia::tag_t<B>
+  >::template times_impl<A, B>
+{};
+
+} // namespace my_namespace
+```
+
+@section sc_tcls_spec Specializing typeclasses for a data type
+
+Suppose you have made a custom data type that needs to belong to a typeclass; in
+this case, a `number` data type, which should implement `Arithmetic`:
+
+```
+namespace my_namespace
+{
+
+struct number_tag;
+
+template <::std::intmax_t X>
+struct number
+{
+  using type = number;
+
+  using tag = number_tag;
+
+  using value_type = ::std::intmax_t;
+
+  static constexpr ::std::intmax_t value = X;
+};
+
+} // namespace my_namespace
+```
+
+We will specialize the typeclass for `number` as follows:
+
+```
+namespace erythronelumbo { namespace maihuenia
+{
+
+template <>
+struct typeclass<
+  ::my_namespace::Arithmetic
+>::define_for<
+  ::my_namespace::number_tag
+> :
+  derived_typeclass_ops<::my_namespace::Arithmetic>::template define_for<
+    ::my_namespace::number_tag
+  >
+{
+  template <typename A, typename B>
+  struct plus_impl :
+    ::my_namespace::number<A::value + B::value>
+  {};
+
+  template <typename X>
+  struct negate_impl :
+    ::my_namespace::number<-X::value>
+  {};
+};
+
+}} // namespace erythronelumbo::maihuenia
+```
+
+Notice how this specialization of the `define_for` from `typeclass` also
+inherits from the `define_for` from `derived_typeclass_ops`, which contains the
+definitions for the _derived_ operations `minus` and `plus`. This will also
+incorporate these operations to our `typeclass`. Also, since the `define_for`
+from `derived_typeclass_ops` inherits from `true_`, it will indicate that our
+type implements the typeclass `Arithmetic`.
+
+If better definitions for the _derived_ operations are needed, it will not be
+necessary to do the inheritance thing done before with `derived_typeclass_ops`:
+
+```
+namespace erythronelumbo { namespace maihuenia
+{
+
+template <>
+struct typeclass<
+  ::my_namespace::Arithmetic
+>::define_for<
+  ::my_namespace::number_tag
+> :
+  true_
+{
+  template <typename A, typename B>
+  struct plus_impl :
+    ::my_namespace::number<A::value + B::value>
+  {};
+
+  template <typename X>
+  struct negate_impl :
+    ::my_namespace::number<-X::value>
+  {};
+
+  template <typename A, typename B>
+  struct minus_impl :
+    ::my_namespace::number<A::value - B::value>
+  {};
+
+  template <typename A, typename B>
+  struct times_impl :
+    ::my_namespace::number<A::value * B::value>
+  {};
+};
+
+}} // namespace erythronelumbo::maihuenia
+```
+
+Now, this `define_for` must inherit from `true_`, to indicate that our typeclass
+__is__ valid for `number`.
+
+@section sc_tcls_macros Using macros
+
+Another way of declaring typeclasses and specializing them for data types is by
+using macros provided by this library, which also uses the `typeclass` and
+`derived_typeclass_ops` structs underneath.
+
+To declare a typeclass, use `ERYTHRONELUMBO_MAIHUENIA_DECLARE_TYPECLASS` as
+follows:
+
+```
+namespace my_namespace
+{
+
+struct Arithmetic;
+
+} // namespace my_namespace
+
+
+ERYTHRONELUMBO_MAIHUENIA_DECLARE_TYPECLASS( \
+  (my_namespace), \
+  ::my_namespace::Arithmetic, \
+  2, \
+  ( \
+    (plus, 1, (0, 1)), \
+    (negate, 0, 1, 0, 0, (0)) \
+  ), \
+  ( \
+    (minus, 0, 2, 0, 0, (0, 1)), \
+    (times, 0, 2, 0, 0, (0, 1)) \
+  ) \
+)
+```
+
+This macro, which must be used in the global namespace, will also inject the
+intrinsic metafunctions, in their _free_ form, in a given namespace (in this
+case, `my_namespace`).
+
+To define the _derived_ operations, we can use 
+`ERYTHRONELUMBO_MAIHUENIA_DEFINE_DERIVED_TYPECLASS_OPS` after "calling" the
+previous typeclass declaration macro:
+
+```
+ERYTHRONELUMBO_MAIHUENIA_DEFINE_DERIVED_TYPECLASS_OPS( \
+  (my_namespace), \
+  ::my_namespace::Arithmetic, \
+  1, \
+  ( \
+    ( \
+      minus, 0, 2, 0, 0, (0, 1), \
+      (::my_namespace::add<X0, typename ::my_namespace::negate<X1>::type>) \
+    ), \
+    ( \
+      times, 0, 2, 0, 0, (0, 1), \
+      (::my_namespace::detail::generic_times<X0, X1>) \
+    ) \
+  ) \
+)
+```
+
+Now, we can specialize our `number` data type with the
+`ERYTHRONELUMBO_MAIHUENIA_SPECIALIZE_TYPECLASS` macro:
+
+```
+ERYTHRONELUMBO_MAIHUENIA_SPECIALIZE_TYPECLASS( \
+  ::my_namespace::Arithmetic, \
+  ((::my_namespace::number_tag, ::my_namespace::number_tag)), \
+  ( \
+    (plus, 2, 0, (::my_namespace::number<X0::value + X1::value>)), \
+    (negate, 1, 0, (::my_namespace::number<-X0::value>)) \
+  ), \
+  () \
+)
+```
+
+Or, if we want to provide a custom definition for the _derived_ operations, we
+can do the following:
+
+```
+ERYTHRONELUMBO_MAIHUENIA_SPECIALIZE_TYPECLASS( \
+  ::my_namespace::Arithmetic, \
+  ((::my_namespace::number_tag, ::my_namespace::number_tag)), \
+  ( \
+    (plus, 2, 0, (::my_namespace::number<X0::value + X1::value>)), \
+    (negate, 1, 0, (::my_namespace::number<-X0::value>)) \
+  ), \
+  ( \
+    (minus, 2, 0, (::my_namespace::number<X0::value - X1::value>)), \
+    (times, 2, 0, (::my_namespace::number<X0::value * X1::value>)) \
+  ) \
+)
+```
+
+More examples of this can be found in the source code of the typeclasses that
+this library provides (see the @ref typeclasses module of this reference), as
+well as most of its data types.
+
+*/

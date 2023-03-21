@@ -1,0 +1,228 @@
+/**
+@defgroup lib_info Library information
+
+@brief Information of this library
+
+Utilities that provide information about this library.
+*/
+
+
+/**
+@defgroup configuration Configuration
+
+@brief Configuration
+
+Configurable options that define the behavior of some of the library's
+functionalities.
+*/
+
+
+/**
+@defgroup concepts Concepts
+
+@brief Concepts
+
+Constraints and behavior that applies to certain types and other utilities.
+*/
+
+/**
+@defgroup cn_integralconstant IntegralConstant
+@ingroup concepts
+
+@brief Integral constants
+
+Data types that hold the value of an integral value, as well as its type.
+
+### Semantics
+
+For any @ref cn_integralconstant `N`:
+- `typename N::type` must be `N` (itself).
+- `typename N::value_type` must be an integral type.
+- `N::value` must be an integral value, of the type given in
+  `typename N::value_type`.
+- `typename N::tag` (and/or `typename tag<N>::type`) must be
+  `integer_c_tag<typename N::value_type>`.
+- `value_type x = N{}` must be valid.
+*/
+
+/**
+@defgroup typeclasses Typeclasses
+@ingroup concepts
+
+@brief Typeclasses and their associated operations
+
+A set of typeclasses provided by this library, as well as their associate
+*intrinsic* operations.
+
+@note
+  The intrinsic operations are listed in the sections that correspond to
+  their respective typeclasses, instead of the data types that implement
+  them.
+*/
+
+
+/**
+@defgroup tpc_definition Typeclass definition
+
+@brief Utilities for definition of typeclasses
+
+Utilities provided by this library for creating and defining typeclasses. See
+the @ref pg_typeclasses page for more detailed information.
+*/
+
+
+/**
+@defgroup err_handling Error handling
+
+@brief Utilities for error handling
+
+Utilities for error handling in this library and defining error codes.
+*/
+
+
+/**
+@defgroup err_codes Error codes
+
+@brief Error codes
+
+Error codes emitted by some utilities from this library.
+*/
+
+
+/**
+@defgroup metafunctions Metafunctions
+
+@brief Metafunctions
+
+Metafunctions provided by this library.
+*/
+
+/**
+@defgroup mfn_core Core
+@ingroup metafunctions
+
+@brief *Core* utilities
+
+*Core* utilities used in this library.
+*/
+
+/**
+@defgroup control Control
+@ingroup metafunctions
+
+@brief Control structures
+
+Metafunctions that act like control structures.
+*/
+
+/**
+@defgroup functional Functional
+@ingroup metafunctions
+
+@brief Functional
+
+Utility metafunctions and metafunction objects, which can do operations on
+metafunctions.
+*/
+
+/**
+@defgroup mfn_miscellaneous Miscellaneous
+@ingroup metafunctions
+
+@brief Miscellaneous
+
+Miscellaneous metafunctions.
+*/
+
+
+/**
+@defgroup algorithms Algorithms
+
+@brief Algorithms
+
+Metafunctions that operate in sequences by creating them, modifying them or
+doing operations with their elements.
+*/
+
+/**
+@defgroup alg_creation Type creation
+@ingroup algorithms
+
+@brief Type creation algorithms
+
+Algorithms that create types.
+*/
+
+/**
+@defgroup alg_transformation Transformation algorithms
+@ingroup algorithms
+
+@brief Transformation algorithms
+
+Algorithms that modify the content contained in some types.
+*/
+
+/**
+@defgroup alg_querying Querying algorithms
+@ingroup algorithms
+
+@brief Querying algorithms
+
+Algorithms that do operations from the content contained in some types,
+without modifying them.
+*/
+
+/**
+@defgroup alg_runtime Runtime algorithms
+@ingroup algorithms
+
+@brief Runtime algorithms
+
+Algorithms that involve operations done at runtime.
+*/
+
+
+/**
+@defgroup datatypes Data types
+
+@brief Data types
+
+Data types provided by this library.
+*/
+
+/**
+@defgroup dt_sequences Sequences
+@ingroup datatypes
+
+@brief Sequences
+
+Objects that can contain several types or that behave as containers.
+*/
+
+/**
+@defgroup dt_seq_views Sequence views
+@ingroup dt_sequences
+
+@brief Sequence views
+
+Adaptors for iterables that offer an alternate representation for them, where
+their elements are computed on demand.
+*/
+
+/**
+@defgroup dt_numeric Numeric
+@ingroup datatypes
+
+@brief Numeric data types
+
+Data types that represent numerical values.
+*/
+
+/**
+@defgroup dt_miscellaneous Miscellaneous
+@ingroup datatypes
+
+@brief Miscellaneous data types
+
+Miscellaneous data types.
+*/

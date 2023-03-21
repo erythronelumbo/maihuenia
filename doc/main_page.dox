@@ -1,0 +1,17 @@
+/**
+
+@mainpage Maihuenia
+
+_Maihuenia_ is a template metaprogramming library for C++11 and later
+standards. This library is destinated to ease operations on types, computations
+that can be done at compile time and runtime operations from types.
+
+This library is named after a genus of cushion-forming cacti.
+
+@section main_usingdocs Using this documentation
+
+The _Modules_ section contains categorized documentation about Maihuenia's
+features, generated from the library's source code. The _Related Pages_
+section contains information related to its design.
+
+*/

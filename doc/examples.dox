@@ -1,0 +1,43 @@
+/**
+@page pg_examples Examples
+@brief Examples
+
+A set of examples that show Maihuenia's features:
+
+- @subpage pg_ex_custom_typeclass
+- @subpage pg_ex_fibonacci
+- @subpage pg_ex_ordering_strings
+*/
+
+/**
+@page pg_ex_custom_typeclass Custom typeclass
+@brief Defining a custom typeclass
+
+In this example, we will define a custom typeclass, as well as specialize it for
+a data type.
+
+@include example/custom_typeclass.cpp
+*/
+
+/**
+@page pg_ex_fibonacci Fibonacci numbers
+@brief Calculating Fibonacci numbers at compile time
+
+Here we will calculate Fibonacci numbers recursively, with three different
+methods: with a naïve implementation, using `until` and using `lambda`. This
+program will also print a table with the resulting Fibonacci numbers, calculated
+with these methods.
+
+@include example/fibonacci.cpp
+*/
+
+/**
+@page pg_ex_ordering_strings Ordering strings
+@brief Ordering strings in alphabetical order
+
+This example shows how we can sort strings (in this case, names of insects) in
+alphabetical order. The resulting program will print these names in their
+original order, in alphabetical order and in reverse alphabetical order.
+
+@include example/ordering_strings.cpp
+*/

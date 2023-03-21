@@ -1,0 +1,21 @@
+/**
+
+@page pg_motivation Motivation
+@brief Rationale behind the creation of Maihuenia
+
+Maihuenia is designed for easing the writing of compile time operations, which
+comprehend, among others, operations on types and their properties, realizing at
+compile time complex computations that can be done at compile time (for example,
+string manipulations, selecting types and functions from string literals,
+operations over sequences of integers and calculating constants) and doing
+runtime operations from types. It is also made to aid writing code
+optimizations, to avoid doing certain operations at runtime.
+
+It is also written to replace
+[_Mulinum_](https://github.com/erythronelumbo/mulinum), a previous library for
+template metaprogramming, due to the unsatisfaction with its design. It is worth
+mentioning that Mulinum (and therefore Maihuenia) started as a series of
+learning exercises on template metaprogramming, that evolved into such a
+library.
+
+*/

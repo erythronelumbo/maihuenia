@@ -1,0 +1,18 @@
+/**
+
+@page pg_namingconventions Naming conventions
+@brief Rationale behing the names of Maihuenia's facilities
+
+The naming of the types provided by this library is the following:
+
+```
+type-name + _c + _t
+```
+
+- The `_c` suffix indicates that a template type takes at least one non-type
+  template argument (for example, an `int` or a pointer value).
+- The `_t` suffix indicates that the type is the content of the `type` member
+  of another type.
+  - For any type `thing`, `thing_t` is the same as `typename thing::type`.
+
+*/

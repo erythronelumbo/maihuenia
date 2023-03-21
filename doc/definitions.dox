@@ -1,0 +1,98 @@
+/**
+
+@page pg_definitions Definitions
+@brief Terminology used in this library
+
+@section sc_def_valuetype Value type
+
+A *value type* is a type that can act as a *value* or a *variable*. This
+definition applies to any type.
+
+@section sc_def_datatype Data type
+
+Similar to the ones used in runtime, *data types* are collections or structures
+that can contain value types. Since C++'s templates resemble a **typeless**
+functional programming language, they also have a member `tag` type for their
+respective *type tag* that representates them.
+
+## Semantics
+
+For any data type `d` and its respective type tag `d_tag`:
+- `typename d:``:type` must be `d`.
+- `typename d:``:tag` must be `d_tag`.
+
+@section sc_def_typetag Type tag
+
+An empty `struct` that represents the *type* of a data type. It also allows
+typeclasses or some metafunctions to be overloaded for the data type it
+represents.
+
+```
+struct my_type_tag;
+```
+
+@section sc_def_typeclass Typeclass
+
+See @ref pg_typeclasses.
+
+@section sc_def_metafunction Metafunction
+
+A compile-time operation, analogous to runtime functions, that realizes
+computations over one or more types, resulting in another type. It is defined as
+a class containing a member type (or type alias), named in this library as
+`type`, with the result.
+
+In Maihuenia, this definition of metafunction is based on a *lazy* approach,
+where the metafunction's *body* can be treated as a value type and its
+invocation is done by accessing the `type` member type. This is useful for
+preventing compilation errors.
+
+```
+template <typename X0, typename X1, typename... Xs>
+struct my_mfn
+{
+  using type = ...;
+};
+
+using res1 = typename my_mfn<a0, a1, a2, a3>::type;
+using to_be_invoked = my_mfn<b0, b1, b2, b3, b4>;
+using res2 = typename to_be_invoked::type;
+```
+
+## Semantics
+
+For any metafunction `f` and types `x_0, x_1, ..., x_n`:
+- `typename f<x_0, x_1, ..., x_n>:``:type` is a type or a type alias. This
+  corresponds to the *result*.
+- `typename f<>:``:type` is a type or a type alias. Same with above.
+- `typename f:``:type` is a type or a type alias. Same with above.
+
+@section sc_def_metafunctionclass Metafunction class
+
+A class analogous to *function objects*, that can be treated as a
+non-metafunction type. It is defined as a class with a nested metafunction,
+named in this library as `apply`.
+
+## Semantics
+
+For any metafunction class `c` and types `x_0, x_1, ..., x_n`:
+- `typename c::template apply<x_0, x_1, ..., x_n>` is a metafunction.
+  - The semantics for metafunctions must apply to this member.
+- `typename c::template apply<x_0, x_1, ..., x_n>:``:type` is a type or a
+  type alias. This corresponds to the *result*.
+
+@section sc_dec_predicate Predicate
+
+*Predicates* are metafunctions and metafunction classes that result in a
+@ref tc_logical value type, based on how types have a property or not, as well
+as how types and their properties relate to one another.
+
+@subsection sc_dec_pred_unary Unary predicate
+
+A predicate that takes a single value type.
+
+@subsection sc_dec_pred_binary Binary predicate
+
+A predicate that takes two value types.
+
+*/

@@ -1,0 +1,25 @@
+/**
+
+@page pg_priorart Prior art
+@brief Other related work
+
+The decisions behind the design of this library and its functionalities were
+also based in other, already existing template metaprogramming libraries:
+
+- Boost's [MPL](https://www.boost.org/doc/libs/release/libs/mpl/),
+  [Mp11](https://www.boost.org/doc/libs/release/libs/mp11/) and
+  [Hana](https://www.boost.org/doc/libs/release/libs/hana/).
+- [MPL11](https://github.com/ldionne/mpl11), where the typeclass approach is
+  based on.
+- [Mulinum](https://github.com/erythronelumbo/mulinum), the library Maihuenia
+  is made to supersede.
+
+Also, the following articles were also helpful:
+
+- Matt Bierner's [_Stupid Template Tricks_](https://blog.mattbierner.com/series/stupid_template_tricks/)
+  series of articles.
+- [Simple C++11 metaprogramming](https://www.boost.org/doc/libs/1_81_0/libs/mp11/doc/html/simple_cxx11_metaprogramming.html)
+  and [its sequel](https://www.boost.org/doc/libs/1_81_0/libs/mp11/doc/html/simple_cxx11_metaprogramming_2.html)
+  by Peter Dimov (author of the aforementioned Boost.Mp11).
+
+*/

@@ -1,0 +1,46 @@
+PROJECT_NAME = Maihuenia
+PROJECT_NUMBER = @PROJECT_VERSION@
+OUTPUT_LANGUAGE = English
+
+AUTOLINK_SUPPORT = NO
+
+ALIASES += defdifffromh="@note The definition shown here is made for convenience. Refer to the corresponding header file for the actual definition."
+ALIASES += invokesmfn{1}="Shorthand for invoking the @ref \1 metafunction."
+ALIASES += mfncalltoitself="@brief Reference to itself^^^^Calls to itself when treated as a metafunction."
+ALIASES += memtypetag="@brief Type tag^^^^The *tag* that represents this type."
+ALIASES += typetag_group{1}="@ingroup \1^^^^@brief Type tag^^^^The *type tag* that represents @ref \1."
+ALIASES += typetag{1}="@brief Type tag^^^^The *type tag* that represents @ref \1."
+ALIASES += typeclasstag{1}="@ingroup \1^^^^@brief Typeclass tag^^^^Tag that represents the @ref \1 typeclass."
+
+EXTRACT_ALL = YES
+ENABLE_PREPROCESSING = YES
+MACRO_EXPANSION = YES
+EXPAND_ONLY_PREDEF = YES
+PREDEFINED = \
+  ERYTHRONELUMBO_MAIHUENIA_DOXYGEN_INVOKED \
+  ERYTHRONELUMBO_MAIHUENIA_IF_DOXYGEN(...)=__VA_ARGS__ \
+  ERYTHRONELUMBO_MAIHUENIA_IF_NOT_DOXYGEN(...)=
+SKIP_FUNCTION_MACROS = NO
+STRIP_CODE_COMMENTS = YES
+
+INPUT = \
+  @DOXYGEN_INPUT_DIR@/doc/ \
+  @DOXYGEN_INPUT_DIR@/include/erythronelumbo/maihuenia/ \
+  @DOXYGEN_INPUT_DIR@/include/erythronelumbo/maihuenia/fwd
+FILE_PATTERNS = *.hpp *.dox
+RECURSIVE = NO
+
+EXAMPLE_PATH = @DOXYGEN_INPUT_DIR@/example
+EXAMPLE_PATTERNS = *.cpp
+EXAMPLE_RECURSIVE = YES
+
+OUTPUT_DIRECTORY = @DOXYGEN_OUTPUT_DIR@
+
+# LaTeX documentation is not needed here.
+GENERATE_LATEX = NO
+
+HAVE_DOT = NO
+
+# Generates a tagfile for linking to the documentation from an external project
+# (using Doxygen) to the documentation of this library.
+GENERATE_TAGFILE = @DOXYGEN_OUTPUT_DIR@/erythronelumbo_maihuenia_tagfile.tag

@@ -1,0 +1,137 @@
+// Copyright (c) 2023 Álvaro Ceballos
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+#include <cstdlib>
+#include <cstddef>
+
+#include <erythronelumbo/maihuenia/integer_c.hpp>
+#include <erythronelumbo/maihuenia/set.hpp>
+
+#include "../eq_types.hpp"
+
+
+namespace mhn = erythronelumbo::maihuenia;
+
+
+using x0 = mhn::int_<0>;
+using x1 = mhn::int_<1>;
+using x2 = mhn::int_<2>;
+using x3 = mhn::int_<3>;
+using x4 = mhn::int_<4>;
+using x5 = mhn::int_<5>;
+
+
+template <
+  typename M,
+  typename E0 = mhn::index_out_of_range,
+  typename E1 = mhn::index_out_of_range,
+  typename E2 = mhn::index_out_of_range,
+  typename E3 = mhn::index_out_of_range,
+  typename E4 = mhn::index_out_of_range,
+  typename E5 = mhn::index_out_of_range
+>
+constexpr void test_at_key()
+{
+  test_eq_types<typename mhn::at_key<M, x0>::type, E0>();
+  test_eq_types<typename mhn::at_key<M, x1>::type, E1>();
+  test_eq_types<typename mhn::at_key<M, x2>::type, E2>();
+  test_eq_types<typename mhn::at_key<M, x3>::type, E3>();
+  test_eq_types<typename mhn::at_key<M, x4>::type, E4>();
+  test_eq_types<typename mhn::at_key<M, x5>::type, E5>();
+}
+
+
+int main()
+{
+  using set1 = mhn::set_c<int>;
+  using set2 = mhn::set_c<int, 0>;
+  using set3 = mhn::set_c<int, 0, 1>;
+  using set4 = mhn::set_c<int, 0, 1, 2, 3, 4>;
+
+  static_assert(mhn::aempty<set1>::type::value, "!!!");
+  static_assert(!mhn::aempty<set2>::type::value, "!!!");
+  static_assert(!mhn::aempty<set3>::type::value, "!!!");
+  static_assert(!mhn::aempty<set4>::type::value, "!!!");
+
+  static_assert(!mhn::has_key<set1, x0>::type::value, "!!!");
+  static_assert(mhn::has_key<set2, x0>::type::value, "!!!");
+  static_assert(!mhn::has_key<set2, x1>::type::value, "!!!");
+  static_assert(mhn::has_key<set3, x0>::type::value, "!!!");
+  static_assert(mhn::has_key<set3, x1>::type::value, "!!!");
+  static_assert(!mhn::has_key<set3, x2>::type::value, "!!!");
+  static_assert(mhn::has_key<set4, x0>::type::value, "!!!");
+  static_assert(mhn::has_key<set4, x1>::type::value, "!!!");
+  static_assert(mhn::has_key<set4, x2>::type::value, "!!!");
+  static_assert(mhn::has_key<set4, x3>::type::value, "!!!");
+  static_assert(mhn::has_key<set4, x4>::type::value, "!!!");
+  static_assert(!mhn::has_key<set4, x5>::type::value, "!!!");
+
+  test_at_key<set1>();
+  test_at_key<set2, x0>();
+  test_at_key<set3, x0, x1>();
+  test_at_key<set4, x0, x1, x2, x3, x4>();
+
+  using new_elem1 = x5;
+  using new_elem2 = x0;
+
+  test_eq_types<
+    typename mhn::ainsert<set1, new_elem1>::type,
+    mhn::set_c<int, 5>
+  >();
+  test_eq_types<
+    typename mhn::ainsert<set2, new_elem1>::type,
+    mhn::set_c<int, 0, 5>
+  >();
+  test_eq_types<
+    typename mhn::ainsert<set2, new_elem2>::type,
+    mhn::set_c<int, 0>
+  >();
+  test_eq_types<
+    typename mhn::ainsert<set3, new_elem1>::type,
+    mhn::set_c<int, 0, 1, 5>
+  >();
+  test_eq_types<
+    typename mhn::ainsert<set3, new_elem2>::type,
+    mhn::set_c<int, 0, 1>
+  >();
+  test_eq_types<
+    typename mhn::ainsert<set4, new_elem1>::type,
+    mhn::set_c<int, 0, 1, 2, 3, 4, 5>
+  >();
+  test_eq_types<
+    typename mhn::ainsert<set4, new_elem2>::type,
+    mhn::set_c<int, 0, 1, 2, 3, 4>
+  >();
+
+  test_eq_types<
+    typename mhn::aerase<set1, x0>::type,
+    set1
+  >();
+  test_eq_types<
+    typename mhn::aerase<set1, x1>::type,
+    set1
+  >();
+  test_eq_types<
+    typename mhn::aerase<set2, x0>::type,
+    mhn::set_c<int>
+  >();
+  test_eq_types<
+    typename mhn::aerase<set2, x1>::type,
+    set2
+  >();
+  test_eq_types<
+    typename mhn::aerase<set3, x0>::type,
+    mhn::set_c<int, 1>
+  >();
+  test_eq_types<
+    typename mhn::aerase<set3, x1>::type,
+    mhn::set_c<int, 0>
+  >();
+  test_eq_types<
+    typename mhn::aerase<set3, x5>::type,
+    set3
+  >();
+
+  return EXIT_SUCCESS;
+}
