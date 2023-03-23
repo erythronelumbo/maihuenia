@@ -39,7 +39,7 @@ the unit tests.
 
 Run `make test` to run the tests.
 
-Note that they are not proper unit tests, but they only checks if the
+Note that they are not proper unit tests, but they only check if the
 compilation is done successfully.
 
 ### Compiling the examples
